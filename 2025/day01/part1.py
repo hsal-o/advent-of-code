@@ -1,15 +1,7 @@
-def get_lines_from_file(file_name):
-    try:
-        with open(file_name, 'r') as file:
-            lines = file.readlines()
-            return lines
-    except Exception:
-        print(f"File '{file_name}' not found")
-        return None
-
+from utils.input import get_lines
 
 def main():
-    lines = get_lines_from_file("input.txt")
+    lines = get_lines("input.txt")
 
     curr_point = 50
     count = 0
