@@ -36,7 +36,7 @@ def main():
 
                 if len(set(list)) == 1:
                     sum += num
-                    pass
+                    break
 
     print(f"sum: {sum}")
 
