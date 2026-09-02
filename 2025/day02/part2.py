@@ -1,11 +1,4 @@
-def get_lines_from_file(file_name):
-    try:
-        with open(file_name, 'r') as file:
-            lines = file.readlines()
-            return lines
-    except Exception:
-        print(f"File '{file_name}' not found")
-        return None
+from utils.input import get_lines
 
 # Square root approach for getting factors
 def get_factors(num):
@@ -20,7 +13,7 @@ def get_factors(num):
     return sorted(factors)
 
 def main():
-    raw = get_lines_from_file("input.txt")[0].split(",")
+    raw = get_lines("input.txt")[0].split(",")
     ranges = [[int(num) for num in item.split("-")] for item in raw]
 
     sum = 0
