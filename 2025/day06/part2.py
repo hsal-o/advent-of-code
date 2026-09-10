@@ -1,59 +1,72 @@
 from utils.input import get_lines
 
+def get_column_lens(symbols):
+    counts = []
+    count = 1 # Start at one since we count current char
+    for i in range(len(symbols)):
+        if(symbols[i] in ["+", "*"]):
+            counts.append(count - 1) # Dont include current symbol
+            count = 1
+            continue
+
+        count += 1
+
+        # Append last column before finishing loop        
+        if i+1 >= len(symbols):
+            counts.append(count)
+
+    return counts[1:] # Exclude first element since first char in symbol is a symbol
+
+def get_expression_result(symbol, numbers):
+    result = 0
+    if symbol == "+":
+        for num in numbers:
+            result += int(num)
+    elif symbol == "*":
+        for num in numbers:
+            if result == 0:
+                result = int(num)
+            else:
+                result *= int(num)
+
+    return result
+
 def main():
-    lines = get_lines("input.txt")
-    lines = [[item.strip() for item in line.split(" ") if item.strip()] for line in lines]
+    lines = get_lines("input.txt", False)
+    
+    symbol_line = lines[-1]
+    lines = lines[:len(lines)-1]
 
-    digit_lines = lines[:len(lines)-1]
-    symbol_lines = lines[len(lines)-1:][0]
-
-    num_col = len(digit_lines[0])
-    num_row = len(digit_lines)
+    column_lens = get_column_lens(symbol_line)
 
     total = 0
-    for col in range(num_col):
-        result = 0
-        symbol = symbol_lines[col]
+    curr_index = 0
+    for length in column_lens:
+        # Collect raw numbers from column
+        raw_numbers = []
+        for row in lines:
+            raw_numbers.append(row[curr_index:curr_index + length])
 
-        # Find the # of numbers we have to construct = max length
-        max_length = 0
-        for row in range(num_row):
-            length = len(digit_lines[row][col])
-            if length > max_length:
-                max_length = length
+        # Build new numbers from raw numbers
+        new_numbers = ["" for _ in range(length)]
+        for i in range(len(new_numbers)):
+            for j, raw_num in enumerate(raw_numbers):
+                # Skip if stripped completely
+                if raw_num == "":
+                    continue
 
-        numbers = ["" for _ in range(max_length)]
-        
-        for i in range(len(numbers)): 
+                # Build new number using last digit of number
+                if(raw_num[-1] != " "):
+                    new_numbers[i] += raw_num[-1]
 
-            for row in range(num_row):
-                num = digit_lines[row][col]
+                # Strip away last digit from original number
+                raw_numbers[j] = raw_num[:len(raw_num)-1]
 
-                # Skip if number has been stripped completely
-                if(not num):
-                   continue
+        # Add expression result to total
+        total += get_expression_result(symbol_line[curr_index], new_numbers)
 
-                # Build number using the last digit of number
-                numbers[i] += num[-1]
-
-                # Strip away last digit from number
-                digit_lines[row][col] = num[:len(num)-1]
-
-
-        if symbol == "+":
-            for num in numbers:
-                result += int(num)
-            
-        elif symbol == "*":
-            for num in numbers:
-                if result == 0:
-                    result = int(num)
-                else:
-                    result *= int(num)
-
-        print(f"numbers: {numbers} \t\treuslt: {result}")
-
-        total += result
+        # Shift over to new column
+        curr_index += length + 1   
 
     print(f"total: {total}")
 
