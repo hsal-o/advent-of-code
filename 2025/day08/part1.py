@@ -56,7 +56,7 @@ def main():
 
     circuits = []   
     for i, (key, value) in enumerate(sorted_node_distances):
-        if i >= 10:
+        if i >= 1000:
             break
 
         node_a, node_b = list(key)
@@ -84,8 +84,8 @@ def main():
 
             circuits.append(merged_circuit)
 
-    for circuit in circuits:
-        print(circuit) 
+    lengths = sorted([len(c) for c in circuits], reverse=True)
+    print(f"result: {lengths[0] * lengths[1] * lengths[2]}")
 
 
 if __name__ == "__main__":
